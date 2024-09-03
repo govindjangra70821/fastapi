@@ -160,10 +160,10 @@ async def process_shipping_requirements(req: ShippingRequirements):
     
     
     return {
-    "filtered_vendors": final_state['filtered_vendors'],
-    "evaluated_vendors": final_state['evaluated_vendors'],
-    "analyzed_vendors": final_state['analyzed_vendors'],
-    "assessed_vendors": final_state['assessed_vendors'],
+    "coverage_area_filtered_vendors": final_state['filtered_vendors'],
+    "carrier_attributes_evaluated_vendors": final_state['evaluated_vendors'],
+    "weight_range_in_lbs_analyzed_vendors_": final_state['analyzed_vendors'],
+    "return_needed_assessed_vendors": final_state['assessed_vendors'],
     "ranked_vendors": final_state['ranked_vendors']
 }
 
