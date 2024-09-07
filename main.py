@@ -6,23 +6,62 @@ from langgraph.graph import StateGraph, END
 import json
 from openai import OpenAI
 import os
+from collections import defaultdict
+
+
+def remove_unwanted_fields_from_interactives(carrier_attributes_db):
+    # Iterate over each entry in the list
+    for carrier in carrier_attributes_db:
+        # Remove the "_id" field if it exists
+        if "_id" in carrier:
+            del carrier["_id"]
+        # Remove the "__v" field if it exists
+        if "__v" in carrier:
+            del carrier["__v"]
+    
+    return carrier_attributes_db
+
 # Load your data files (update the paths to your actual files)
 with open("orchestro.carriercoverages.json") as carrier_coverage:
     carrier_coverage_db = json.load(carrier_coverage)
 
 with open("orchestro.carrierinteractives.json") as carrier_attributes:
-    carrier_attributes_db = json.load(carrier_attributes)
+    carrier_attributes_db = remove_unwanted_fields_from_interactives(json.load(carrier_attributes))
 
 with open("orchestro.carriermaxweight.json") as carrier_max_weight:
     carrier_max_weight_db = json.load(carrier_max_weight)
 
 with open("orchestro.carrierreturnssupport.json") as carrier_return_support:
     carrier_return_support_db = json.load(carrier_return_support)
+    
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
 
+def format_carrier_coverage(carrier_coverage_db, threshold=0.4, top_n=20):
+    formatted_coverage = defaultdict(list)
+    
+    for carrier in carrier_coverage_db:
+        carrier_name = carrier['name']
+        
+        for coverage in carrier['coverages']:
+            state = coverage['state']
+            coverage_percentage = coverage['coverage']
+            
+            if coverage_percentage >= threshold:
+                formatted_coverage[state].append((carrier_name, coverage_percentage))
+    
+    for state in formatted_coverage:
+        formatted_coverage[state] = sorted(formatted_coverage[state], key=lambda x: x[1], reverse=True)[:top_n]
+        formatted_coverage[state] = [f"{carrier}_{int(coverage * 100)}" for carrier, coverage in formatted_coverage[state]]
+    
+    return dict(formatted_coverage)
+
+# Load and format the data
+formatted_coverage = format_carrier_coverage(carrier_coverage_db)
+
 # FastAPI app
 app = FastAPI()
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  
@@ -30,6 +69,7 @@ app.add_middleware(
     allow_methods=["*"],  
     allow_headers=["*"], 
 )
+
 # Define the Pydantic model for incoming requests
 class ShippingRequirements(BaseModel):
     coverage_area: List[str]
@@ -57,7 +97,7 @@ def filter_vendors(state: ShippingState) -> ShippingState:
         model="gpt-4o-mini",
         response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": "You are an assistant that is an expert in shipping carrier coverage. You are given the following data about shipping carrier coverage:" + str(carrier_coverage_db)},
+            {"role": "system", "content": "You are an assistant that is an expert in shipping carrier coverage. You are given the following data in the format like: `[<USA_STATE`:[`<CarrierName>_<coverageArea(0-1)>`,`<AnotherCarrierName>_<coverageArea(0-1)>`],<Another_USA_STATE`:[`<CarrierName>_<coverageArea(0-1)>`,`<AnotherCarrierName>_<coverageArea(0-1)>`]]`  for shipping carrier coverage:" + str(formatted_coverage)},
             {
                 "role": "user",
                 "content": "I'm a shipper and I want to ship to the following destinations:" + str(required_coverage_area) + ". Please provide a list of the top 15 carriers that ship to these destinations and return a JSON in this format {'data': ['UPS', 'FedEx', 'Orchestro'...}]"
@@ -177,4 +217,4 @@ async def process_shipping_requirements(req: ShippingRequirements):
 
 @app.get("/")
 async def healthcheck():
-    return {"status": "ok"}
+    return {"status": "server is running"}
