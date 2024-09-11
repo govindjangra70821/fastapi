@@ -8,56 +8,23 @@ from openai import OpenAI
 import os
 from collections import defaultdict
 
-
-def remove_unwanted_fields_from_interactives(carrier_attributes_db):
-    # Iterate over each entry in the list
-    for carrier in carrier_attributes_db:
-        # Remove the "_id" field if it exists
-        if "_id" in carrier:
-            del carrier["_id"]
-        # Remove the "__v" field if it exists
-        if "__v" in carrier:
-            del carrier["__v"]
-    
-    return carrier_attributes_db
-
 # Load your data files (update the paths to your actual files)
 with open("orchestro.carriercoverages.json") as carrier_coverage:
     carrier_coverage_db = json.load(carrier_coverage)
 
 with open("orchestro.carrierinteractives.json") as carrier_attributes:
-    carrier_attributes_db = remove_unwanted_fields_from_interactives(json.load(carrier_attributes))
+    carrier_attributes_db = json.load(carrier_attributes)
 
 with open("orchestro.carriermaxweight.json") as carrier_max_weight:
     carrier_max_weight_db = json.load(carrier_max_weight)
 
 with open("orchestro.carrierreturnssupport.json") as carrier_return_support:
     carrier_return_support_db = json.load(carrier_return_support)
-    
 api_key = os.getenv("OPENAI_API_KEY")
+
 client = OpenAI(api_key=api_key)
 
-def format_carrier_coverage(carrier_coverage_db, threshold=0.4, top_n=20):
-    formatted_coverage = defaultdict(list)
-    
-    for carrier in carrier_coverage_db:
-        carrier_name = carrier['name']
-        
-        for coverage in carrier['coverages']:
-            state = coverage['state']
-            coverage_percentage = coverage['coverage']
-            
-            if coverage_percentage >= threshold:
-                formatted_coverage[state].append((carrier_name, coverage_percentage))
-    
-    for state in formatted_coverage:
-        formatted_coverage[state] = sorted(formatted_coverage[state], key=lambda x: x[1], reverse=True)[:top_n]
-        formatted_coverage[state] = [f"{carrier}_{int(coverage * 100)}" for carrier, coverage in formatted_coverage[state]]
-    
-    return dict(formatted_coverage)
 
-# Load and format the data
-formatted_coverage = format_carrier_coverage(carrier_coverage_db)
 
 # FastAPI app
 app = FastAPI()
@@ -92,60 +59,109 @@ def collect_requirements(state: ShippingState) -> ShippingState:
 
 def filter_vendors(state: ShippingState) -> ShippingState:
     required_coverage_area = state.requirements["coverage_area"]
+    state_list = ["Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+                  "Delaware", "Florida", "Georgia", "Hawaii", "Idaho", "Illinois", "Indiana", "Iowa", "Kansas",
+                  "Kentucky", "Louisiana", "Maine", "Maryland", "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+                  "Missouri", "Montana", "Nebraska", "Nevada", "New Hampshire", "New Jersey", "New Mexico", "New York",
+                  "North Carolina", "North Dakota", "Ohio", "Oklahoma", "Oregon", "Pennsylvania", "Rhode Island",
+                  "South Carolina", "South Dakota", "Tennessee", "Texas", "Utah", "Vermont", "Virginia", "Washington",
+                  "West Virginia", "Wisconsin", "Wyoming"]
     
     coverage_completion = client.chat.completions.create(
         model="gpt-4o-mini",
         response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": "You are an assistant that is an expert in shipping carrier coverage. You are given the following data in the format like: `[<USA_STATE`:[`<CarrierName>_<coverageArea(0-1)>`,`<AnotherCarrierName>_<coverageArea(0-1)>`],<Another_USA_STATE`:[`<CarrierName>_<coverageArea(0-1)>`,`<AnotherCarrierName>_<coverageArea(0-1)>`]]`  for shipping carrier coverage:" + str(formatted_coverage)},
+            {
+                "role": "system", 
+                "content": "Your Tasks: 1. Extract the list of states from the user-provided input. 2. Give response in array of strings format. 3. Give list of states only from this list:"+ str(state_list) +"4. Response should in json Format Like: {'data': ['Florida', 'Texas', 'Ohio'...}]"
+            },
             {
                 "role": "user",
-                "content": "I'm a shipper and I want to ship to the following destinations:" + str(required_coverage_area) + ". Please provide a list of the top 15 carriers that ship to these destinations and return a JSON in this format {'data': ['UPS', 'FedEx', 'Orchestro'...}]"
+                "content":str(required_coverage_area)
             }
         ]
     )
-    state.filtered_vendors = json.loads(coverage_completion.choices[0].message.content)["data"]
-    
-    # Filter out vendors not supporting returns
-    state.filtered_vendors = [carrier for carrier in state.filtered_vendors if carrier in carrier_return_support_db]
+
+    required_states = json.loads(coverage_completion.choices[0].message.content)["data"]
+    filtered_vendors = []
+
+    for carrier in carrier_coverage_db:
+        carrier_name = carrier['name']
+        
+        covered_states = set()
+        
+        for coverage in carrier['coverages']:
+            state_name = coverage['state']
+            coverage_percentage = coverage['coverage']
+
+            if state_name in required_states and coverage_percentage > 0.75:
+                covered_states.add(state_name)
+
+        if set(required_states).issubset(covered_states):
+            filtered_vendors.append(str(carrier_name))
+
+    filtered_vendors = list(set(filtered_vendors))
+
+    state.filtered_vendors = filtered_vendors
     return state
 
 def evaluate_carrier_attributes(state: ShippingState) -> ShippingState:
-    required_carrier_attributes = state.requirements["carrier_attributes"]
+
+   
+    evaluated_vendors = []
     
-    completion = client.chat.completions.create(
-        model="gpt-4o-mini",
-        response_format={ "type": "json_object" },
-        messages=[
-            {"role": "system", "content": "You are an assistant that is an expert in shipping carrier attributes. You are given the following data about shipping carrier attributes:" + str(carrier_attributes_db)},
-            {
-                "role": "user",
-                "content": "I'm a shipper and I have the following shipping needs:" + str(required_carrier_attributes) + ". Please rate each of these carriers: " +str(state.filtered_vendors)+ " based on whether they support my tracking needs and return a JSON in this format {'data': [{'UPS':0.9}, {'FedEx':0.8}, {'Orchestro':0.9}...}]"
-            }
-        ]
-    )
+    tracking_score_map = {
+        "Advanced": 100,
+        "Intermediate": 50,
+        "Basic": 25
+    }
     
-    state.evaluated_vendors = json.loads(completion.choices[0].message.content)["data"]
-    
+    for carrier in state.filtered_vendors:
+        for carrier_data in carrier_attributes_db:
+            if carrier_data['name'] == carrier:
+                # Calculate the average score based on the attributes
+                onboarding_score = 100 / carrier_data["onboardingTime"]  # OnboardingTime score (higher is better if faster)
+                tracking_capability_score = tracking_score_map.get(carrier_data["trackingCapabilities"], 0)  # Use the tracking score map
+                sustainability_score = carrier_data["sustainabilityScore"]  # Sustainability score out of 100
+                
+                avg_score = (onboarding_score + tracking_capability_score + sustainability_score) / 3
+                
+                evaluated_vendors.append({carrier: round(avg_score, 2)})
+
+    state.evaluated_vendors = evaluated_vendors
+
     return state
 
 def analyze_max_weight(state: ShippingState) -> ShippingState:
     required_weight_range = state.requirements["weight_range_in_lbs"]
-    
+   
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": "You are an assistant that is an expert in the weight ranges that shipping carriers permit. You are given the following data about the max weight in lbs that shipping carriers support:" + str(carrier_max_weight_db)},
+            {"role": "system", "content": "Give the maximum weight in based on user input. Response should be json format like {'data': 100}"},
             {
                 "role": "user",
-                "content": "I'm a shipper and I plan to ship packages that weigh in the following range:" + str(required_weight_range) + ". If a carrier supports the entire weight range that I wish to ship then give them a score of 1.0, if only a part then give them a lower score. Please rate each of these carriers: " +str(state.filtered_vendors)+ " based on whether they support my weight range and return a JSON in this format {'data': [{'UPS':0.9}, {'FedEx':0.8}, {'Orchestro':0.9}...}]"
+                "content": str(required_weight_range)
             }
         ]
     )
+    max_required_weight=json.loads(completion.choices[0].message.content)["data"]
+    print(max_required_weight)
+    analyzed_vendors = []
+    for carrier, max_weight in carrier_max_weight_db.items():
+ 
+        if carrier not in state.filtered_vendors:
+            continue
+
+        if max_required_weight <= max_weight:
+            score = 1.0  
+        else:
+            score = 0.0 
+        analyzed_vendors.append({carrier: score})
+
     
-    state.analyzed_vendors = json.loads(completion.choices[0].message.content)["data"]
-    
+    state.analyzed_vendors = analyzed_vendors
     return state
 
 def assess_return_need(state: ShippingState) -> ShippingState:
@@ -157,15 +173,47 @@ def assess_return_need(state: ShippingState) -> ShippingState:
     return state
 
 def rank_and_reason(state: ShippingState) -> ShippingState:
+    requirements = str(state.requirements)
+    evaluated_vendors = str(state.evaluated_vendors)
+    analyzed_vendors = str(state.analyzed_vendors)
+    assessed_vendors = str(state.assessed_vendors)
     
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         response_format={ "type": "json_object" },
         messages=[
-            {"role": "system", "content": "You are an assistant that is an expert in recommending shipping carriers. You are given the following data about the user's requirements  "+ str(state.requirements) + " you have determined that in terms of carrier attributes required by the user this is how the different carriers rate" + str(state.evaluated_vendors) + ". In terms of supporting the desired package shipping weight ranges this is how the different carriers rate:  "+str(state.analyzed_vendors)+". And in terms of providing return functionality, these are the carriers that provide it: "+ str(state.assessed_vendors)},
+            {
+                "role": "system", 
+                "content": f"""
+                You are an expert assistant in shipping carrier recommendations. 
+                You are provided with the user's shipping requirements and a breakdown of how different carriers rate across multiple criteria.
+                
+                Your task is:
+                1. Based on the data provided, rank the top 4 carriers.
+                2. Provide a 2-3 sentence explanation for each recommendation, focusing on why the carrier is a good fit based on the user's needs and the data.
+
+                The data available is as follows:
+                - User's requirements: {requirements}
+                - Carrier evaluations (scores based on carrier attributes): {evaluated_vendors} 
+                - Weight range analysis (scores based on ability to handle the required package weight): {analyzed_vendors} 
+                - Return support assessment (whether the carrier supports return shipments): {assessed_vendors} 
+
+                Output the response in the following JSON format:
+                {{
+                    'data': [
+                        {{'first_ranked_carrier': 'carrier_name', 'explanation': 'explanation_text'}},
+                        {{'second_ranked_carrier': 'carrier_name', 'explanation': 'explanation_text'}},
+                        {{'third_ranked_carrier': 'carrier_name', 'explanation': 'explanation_text'}},
+                        {{'fourth_ranked_carrier': 'carrier_name', 'explanation': 'explanation_text'}}
+                    ]
+                }}
+
+                Avoid using the phrase "carrier attributes" and focus on practical reasons for the rankings.
+                """
+            },
             {
                 "role": "user",
-                "content": "Please rank the top 4 carriers you'd recommend with 2-3 sentence explaination on why so and output the info in the following JSON format: {'data': [{'first_ranked_carrier': 'carrier_name', 'explanation': 'explaination_text'}, {'second_ranked_carrier': 'carrier_name', 'explanation': 'explaination_text'}, {'third_ranked_carrier': 'carrier_name', 'explanation': 'explaination_text'}, {'fourth_ranked_carrier': 'carrier_name', 'explanation': 'explaination_text'}]}. Don't mention the phrase carrier attributes."
+                "content": "Give response in JSON"
             }
         ]
     )
@@ -217,4 +265,4 @@ async def process_shipping_requirements(req: ShippingRequirements):
 
 @app.get("/")
 async def healthcheck():
-    return {"status": "server is running"}
+    return {"status": "API is running"}
