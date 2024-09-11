@@ -70,26 +70,6 @@
 },
 {
   "_id": {
-    "$oid": "66d5b7bfa77d32675bcd0681"
-  },
-  "name": "UPS",
-  "onboardingTime": 2,
-  "trackingCapabilities": "Advanced",
-  "sustainabilityScore": 85,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd0682"
-  },
-  "name": "FedEx",
-  "onboardingTime": 4,
-  "trackingCapabilities": "Advanced",
-  "sustainabilityScore": 80,
-  "__v": 0
-},
-{
-  "_id": {
     "$oid": "66d5b7bfa77d32675bcd0683"
   },
   "name": "USPS",
@@ -306,46 +286,6 @@
   "onboardingTime": 5,
   "trackingCapabilities": "Intermediate",
   "sustainabilityScore": 70,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd0699"
-  },
-  "name": "UPS",
-  "onboardingTime": 2,
-  "trackingCapabilities": "Advanced",
-  "sustainabilityScore": 85,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd069a"
-  },
-  "name": "FedEx",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Advanced",
-  "sustainabilityScore": 80,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd069b"
-  },
-  "name": "DHL",
-  "onboardingTime": 4,
-  "trackingCapabilities": "Advanced",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd069c"
-  },
-  "name": "USPS",
-  "onboardingTime": 1,
-  "trackingCapabilities": "Basic",
-  "sustainabilityScore": 60,
   "__v": 0
 },
 {
@@ -568,16 +508,7 @@
   "sustainabilityScore": 78,
   "__v": 0
 },
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06b3"
-  },
-  "name": "Averitt Express",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 78,
-  "__v": 0
-},
+
 {
   "_id": {
     "$oid": "66d5b7bfa77d32675bcd06b4"
@@ -608,26 +539,7 @@
   "sustainabilityScore": 78,
   "__v": 0
 },
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06b7"
-  },
-  "name": "Southeastern Freight Lines",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 78,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06b8"
-  },
-  "name": "Central Transport",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
+
 {
   "_id": {
     "$oid": "66d5b7bfa77d32675bcd06b9"
@@ -728,36 +640,7 @@
   "sustainabilityScore": 75,
   "__v": 0
 },
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06c3"
-  },
-  "name": "Roadrunner Transportation Systems",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 72,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06c4"
-  },
-  "name": "Averitt Express",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06c5"
-  },
-  "name": "Ward Transport & Logistics",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 78,
-  "__v": 0
-},
+
 {
   "_id": {
     "$oid": "66d5b7bfa77d32675bcd06c6"
@@ -780,26 +663,6 @@
 },
 {
   "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06c8"
-  },
-  "name": "Midwest Motor Express",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 72,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06c9"
-  },
-  "name": "Central Transport",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
-{
-  "_id": {
     "$oid": "66d5b7bfa77d32675bcd06ca"
   },
   "name": "Dayton Freight Lines",
@@ -816,16 +679,6 @@
   "onboardingTime": 5,
   "trackingCapabilities": "Intermediate",
   "sustainabilityScore": 78,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06cc"
-  },
-  "name": "Forward Air Solutions",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 73,
   "__v": 0
 },
 {
@@ -858,16 +711,7 @@
   "sustainabilityScore": 70,
   "__v": 0
 },
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d0"
-  },
-  "name": "Central Freight Lines",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
+
 {
   "_id": {
     "$oid": "66d5b7bfa77d32675bcd06d1"
@@ -878,36 +722,8 @@
   "sustainabilityScore": 72,
   "__v": 0
 },
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d2"
-  },
-  "name": "AAA Cooper Transportation",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d3"
-  },
-  "name": "Southeastern Freight Lines",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d4"
-  },
-  "name": "Averitt Express",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 78,
-  "__v": 0
-},
+
+
 {
   "_id": {
     "$oid": "66d5b7bfa77d32675bcd06d5"
@@ -918,196 +734,7 @@
   "sustainabilityScore": 78,
   "__v": 0
 },
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d6"
-  },
-  "name": "Reddaway",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d7"
-  },
-  "name": "Saia LTL Freight",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d8"
-  },
-  "name": "Peninsula Truck Lines",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06d9"
-  },
-  "name": "Oak Harbor Freight Lines",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 76,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06da"
-  },
-  "name": "A. Duie Pyle",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 78,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06db"
-  },
-  "name": "Daylight Transport",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06dc"
-  },
-  "name": "Pitt-Ohio Express",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06dd"
-  },
-  "name": "Central Freight Lines",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 72,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06de"
-  },
-  "name": "Stevens Transport",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06df"
-  },
-  "name": "Southeastern Freight Lines",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 72,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e0"
-  },
-  "name": "Southwest Freight Lines",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e1"
-  },
-  "name": "Roadrunner Transportation Systems",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e2"
-  },
-  "name": "Bonded Logistics",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e3"
-  },
-  "name": "Transport America",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e4"
-  },
-  "name": "Palmetto Freight Systems",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 72,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e5"
-  },
-  "name": "Expedited Freight Systems",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 78,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e6"
-  },
-  "name": "Magnum LTL",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 75,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e7"
-  },
-  "name": "Dohrn Transfer Company",
-  "onboardingTime": 5,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 70,
-  "__v": 0
-},
-{
-  "_id": {
-    "$oid": "66d5b7bfa77d32675bcd06e8"
-  },
-  "name": "Shevell Group",
-  "onboardingTime": 3,
-  "trackingCapabilities": "Intermediate",
-  "sustainabilityScore": 78,
-  "__v": 0
-},
+
 {
   "_id": {
     "$oid": "66d5b7bfa77d32675bcd06e9"
